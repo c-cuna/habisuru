@@ -15,23 +15,28 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.conf.urls.static import static
 from django.urls import path, re_path, include
 from rest_framework import permissions
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.routers import DefaultRouter
 
-from habits.views import ToDoViewSet, DailyViewSet, FinishedDailyViewSet
+from . import views, settings
+from habits.views import ToDoViewSet
 
 router = DefaultRouter()
 
 router.register(r'todo', ToDoViewSet, basename='todo')
-router.register(r'daily', DailyViewSet, basename='daily')
-router.register(r'finished-daily', FinishedDailyViewSet, basename='finished daily')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path(r'', include(router.urls)),
-    path("api/v1/", include("rest_framework.urls", namespace="rest_framework")),
+    path('', views.index),
+    path('api/v1/', include(router.urls)),
+    path('api/v1/accounts/login/', TokenObtainPairView.as_view(), name='get_auth_token'),
+    path('api/v1/accounts/refresh/', TokenRefreshView.as_view(), name='refresh_auth_token'),
+    path('api/v1/accounts/verify/', TokenVerifyView.as_view(), name='verify_auth_token'),
+    
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path("docs/", SpectacularSwaggerView.as_view(template_name="swagger-ui.html", url_name="schema"), name="swagger-ui",),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

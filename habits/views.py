@@ -1,16 +1,15 @@
 from django.shortcuts import render
 from rest_framework import viewsets
-from .models import ToDo, Daily, FinishedDaily
-from .serializers import ToDoSerializer, DailySerializer, FinishedDailySerializer
+from rest_framework.response import Response
+from rest_framework.decorators import action
+from .models import ToDo
+from .serializers import ToDoSerializer
 
 class ToDoViewSet(viewsets.ModelViewSet):
     serializer_class = ToDoSerializer
     queryset = ToDo.objects.all()
 
-class DailyViewSet(viewsets.ModelViewSet):
-    serializer_class = ToDoSerializer
-    queryset = Daily.objects.all()
-
-class FinishedDailyViewSet(viewsets.ModelViewSet):
-    serializer_class = ToDoSerializer
-    queryset = FinishedDaily.objects.all()
+    @action(detail=False, methods=['DELETE'])
+    def delete_all(self, request):
+        ToDo.objects.all().delete()
+        return Response('success')

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Daily, ToDo
+from .models import  ToDo
 
-admin.site.register([ToDo, Daily])
+admin.site.register([ToDo])
