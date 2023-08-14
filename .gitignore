@@ -85,6 +85,8 @@ local_settings.py
 
 .env
 db.sqlite3
+mydatabase/
+mydatabase
 
 # dependencies
 frontend/node_modules
